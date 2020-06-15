@@ -1,0 +1,29 @@
+ {% extends "app.html" %}
+ {% block page %}
+
+  <h1>At Smith Rock, on the date of {{ random_date }}</h1>
+    <p> </p>
+    <p> </p>
+    <p> </p>
+
+<p>{% if pred_class == 1 %}</p>
+<p class="lead"><img src="https://htmlg.com/tinymce474/plugins/emoticons/img/smiley-cool.gif" alt="cool" /> It looks like that's a good day to climb!</p>
+    <p style="text-align: center;"><img src="{{url_for('static', filename='Smith_yes.jpg')}}" width="500"><p>
+        
+<p>{% else %}</p>
+<h4 style="text-align: center;"><img src="https://htmlg.com/tinymce474/plugins/emoticons/img/smiley-cry.gif" alt="cry" /> Things aren't looking so good. Maybe adjust your expectations/plans.</h4>
+    <p style="text-align: center;"><img src="{{url_for('static', filename='Link_rain_climb.png')}}" width="500"><p>
+        
+<p>{% endif %}</p>
+<p> </p>
+    <p> </p>
+    <p> </p>
+    <p> </p>
+<p class="lead">Predicted Class: {{ pred_class }}</p>
+<p class="lead">XGBoost confidence: {{ prob|round(2) }}</p>
+<p class="lead">Actual Class: {{ actual }}</p>
+<p></p>
+  </body>
+</html>
+
+ {% endblock %}

@@ -1,0 +1,66 @@
+{% from "_formhelpers.html" import render_field %}
+{% extends "app.html" %}
+
+{% block page %}
+<style>
+ #map {
+   width: 100%;
+   height: 600px;
+   background-color: grey;
+ }
+</style>
+<div class="left">
+<h1>SendingTemps: interpreting the recent weather's effects on crag conditions</h1>
+<p class="lead">Select a location near where you'd like to crag</p>
+
+<div id="map"></div>
+
+<form class="form-inline" role="form" method="post" action="/result">
+      {# {{ render_field(form.username) }} #}
+    {{ render_field(form.date) }}
+    {{ render_field(form.lat) }}
+    {{ render_field(form.lng) }}
+    <button type="submit" class="btn btn-primary">Let's go!</button> <p> (takes ~10 seconds) </p>
+</form>
+
+<p>Models predict likelihood of having a few-days past weather window that will lead to 5.12 and above climbing conditions.
+<a href="/about">details &raquo;</a>
+</p>
+</div>
+
+<script type="text/javascript">
+
+var map;
+function initMap() {
+    console.log('starting map');
+    map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 45., lng: -122.},
+    zoom: 7,
+    mapTypeId: google.maps.MapTypeId.TERRAIN
+  });
+    console.log('loaded map');
+    map.addListener('click', function(arg) {
+        console.log('you clicked me');
+        var lat = arg.latLng.lat();
+        var lng = arg.latLng.lng();
+        console.log(lat, lng);
+        document.getElementById("lat").value = lat;
+        document.getElementById("lng").value = lng;
+
+    });
+    {% for row in crags %}
+    var LatLon = {lat: {{ row.latitude }}, lng: {{ row.longitude }}}
+    var marker = new google.maps.Marker({
+        position: LatLon,
+        map: map,
+        title: '{{row.crag}}'
+    })
+    {% endfor %}
+
+
+}
+
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{config.GMAPS}}&callback=initMap" type="text/javascript">
+    </script>
+{% endblock %}
