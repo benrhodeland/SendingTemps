@@ -1,0 +1,19 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+.form-group, button {
+    padding: 20px 15px;
+}
+
+#map { height: 400px; width:100%;}
+
+.low {background-color: green; }
+.moderate {background-color: yellow; }
+.considerable {background-color: orange; }
+.high {background-color: red; }
+.extreme {background-color: red; font-color: white;}
