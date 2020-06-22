@@ -1,89 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <link rel="icon" href="../../favicon.ico">
+{% from "_formhelpers.html" import render_field %}
+{% extends "app.html" %}
 
-  <title>Starter Template for Bootstrap</title>
+{% block page %}
+<style>
+ #map {
+   width: 100%;
+   height: 600px;
+   background-color: grey;
+ }
+</style>
+<div class="left">
+<h1>SendingTemps: interpreting the recent weather's effects on crag conditions</h1>
+<p class="lead">Select a location near where you'd like to crag</p>
 
-  <!-- Bootstrap core CSS -->
-  <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+<div id="map"></div>
 
-  <!-- Custom styles for this template -->
-  <link href="../static/css/starter-template.css" rel="stylesheet">
+<form class="form-inline" role="form" method="post" action="/result">
+      {# {{ render_field(form.username) }} #}
+    {{ render_field(form.date) }}
+    {{ render_field(form.lat) }}
+    {{ render_field(form.lng) }}
+    <button type="submit" class="btn btn-primary">Let's go!</button> <p> (takes ~10 seconds) </p>
+</form>
 
-  <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-  <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-  <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+<p>Models predict likelihood of having a few-days past weather window that will lead to 5.12 and above climbing conditions.
+<a href="/about">details &raquo;</a>
+</p>
+</div>
 
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+<script type="text/javascript">
 
-  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-</head>
+var map;
+function initMap() {
+    console.log('starting map');
+    map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 45., lng: -122.},
+    zoom: 7,
+    mapTypeId: google.maps.MapTypeId.TERRAIN
+  });
+    console.log('loaded map');
+    map.addListener('click', function(arg) {
+        console.log('you clicked me');
+        var lat = arg.latLng.lat();
+        var lng = arg.latLng.lng();
+        console.log(lat, lng);
+        document.getElementById("lat").value = lat;
+        document.getElementById("lng").value = lng;
 
-<body>
+    });
+    {% for row in crags %}
+    var LatLon = {lat: {{ row.latitude }}, lng: {{ row.longitude }}}
+    var marker = new google.maps.Marker({
+        position: LatLon,
+        map: map,
+        title: '{{row.crag}}'
+    })
+    {% endfor %}
 
-  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">Project name</a>
-      </div>
-      <div class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </div><!--/.nav-collapse -->
-    </div>
-  </div>
-<br><br>
-<div class="container">
 
-   <div class="starter-template">
-       <h2>Input Page</h2>
-       <p>Enter some user input</p>
-   </div>
+}
 
-   <div class = "container">
-
-     <form action="/output" method="GET">
-       <div class="form-group">
-         <label for="birth_month">Birth Month:</label>
-         <input type="text" id="birth_month" name='birth_month' placeholder="e.g. ">
-       </div>
-
-       <div>
-         <button type="submit" class="btn btn-default btn-lg">Find these Cesareans!</button>
-       </div>
-
-     </form>
-   </div>
-
-   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-   <script src="static/js/bootstrap.min.js"></script>
-
- </div> <!-- /.container-->
-
-  <!-- Bootstrap core JavaScript
-  ================================================== -->
-  <!-- Placed at the end of the document so the pages load faster -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="static/js/bootstrap.min.js"></script>
-  </body>
-</html>
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{config.GMAPS}}&callback=initMap" type="text/javascript">
+    </script>
+{% endblock %}

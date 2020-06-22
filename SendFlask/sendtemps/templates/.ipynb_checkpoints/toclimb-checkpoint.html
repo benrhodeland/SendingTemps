@@ -1,0 +1,50 @@
+ {% extends "app.html" %}
+ {% block page %}
+
+  <h1>Based on the past 12 days, here's an estimate for the climbing conditions at the 3 nearest crags in our database:</h1>
+  <p class="lead">Date: {{ params.date }}</p>
+<p class="lead">You clicked {{params.lat|round(4)}} and {{params.lng|round(4)}}</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Crag</th>
+            <th>Distance</th>
+            <th> </th>
+            <th>Conditions</th>
+            <th>Confidence</th>
+        </tr>
+    </thead>
+        <tbody>
+        {% for row in crags %}
+        <tr>
+            <td class="lead">{{row.crag}}</td>
+            <td class="lead">{{row.distance|round|int}} miles</td>
+            <td class="lead">{% if row.suggestion == 'Climb on!' %}🤙 {% else %}👎 {% endif %}</td>
+            <td class="lead {% if row.suggestion == 'Climb on!' %}success{% else %}danger{% endif %}">{{row.suggestion}}</td>
+            <td class="lead">{{(row.probability*0.99)|round|int}}%</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+</table>
+
+ {% endblock %}
+
+    
+<!--    <tbody>
+        <tr>
+            <td class="lead"><a href="https://www.mountainproject.com/area/105788989/smith-rock">Smith Rock</a></td>
+            <td class="lead {% if pred_class == 1 %}success{% else %}danger{% endif %}">{% if pred_class == 1 %}🤙 Climb on! {% else %}👎 Not so good.{% endif %}</td>
+            <td class="lead">{{ prob | round(2) }}</td>
+        </tr>
+        <tr>
+            <td class="lead"><a href="https://www.mountainproject.com/area/105789273/madrone-wall">Madrone Wall</a></td>
+            <td class="lead danger">{% if 0 == 1 %}🤙 Climb on! {% else %}👎 Not so good.{% endif %}</td>
+            <td class="lead">{{ (prob/1.5) |round(2) }}</td>
+        </tr>
+        <tr>
+            <td class="lead"><a href="https://www.mountainproject.com/area/105824013/wolf-rock">Wolf Rock</a></td>
+            <td class="lead success">{% if 1 == 1 %}🤙 Climb on! {% else %}👎 Not so good.{% endif %}</td>
+            <td class="lead">{{ (prob/1.1) |round(2) }}</td>
+        </tr>
+    </tbody> -->
